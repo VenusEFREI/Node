@@ -1,17 +1,24 @@
 var http = require('http');
 var url = require('url');
 var querystring = require('querystring');
+var express = require('express');
 
-var server = http.createServer(function(req, res) {
-    var params = querystring.parse(url.parse(req.url).query);
-    
-    res.writeHead(200, {"Content-Type": "text/html"});
-    if ('prenom' in params && 'nom' in params) {
-        res.write('Vous vous appelez ' + params['prenom'] + ' ' + params['nom']);
-        console.log(params['prenom'] + ' ' + params['nom']);
-    }
-    else {
-        res.write('Vous devez bien avoir un prénom et un nom, non ?');
-    }
+var app = express();
+
+app.get('/', function(req, res) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.send('Vous êtes à l\'accueil');
+})
+
+var utilisateur = ['Gael', 'Yoverly', 'Karl'];
+
+app.get('/users', function(req, res) {
+    res.send('Il y a ' + utilisateur.length + ' utilisateurs connectés');
 });
-server.listen(8080)
+
+app.get('/users/:user', function(req, res) {
+    
+    res.render('utilisateur.ejs', {name: req.params.user, utilisateur: utilisateur});
+});
+
+app.listen(8080)
